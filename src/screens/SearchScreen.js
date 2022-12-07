@@ -1,51 +1,43 @@
-import { StyleSheet, Text, View, Alert } from "react-native";
 import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
-import yelp from "../api/yelp";
+import useResults from "../hooks/useResults";
+import ResultsList from "../components/ResultsList";
 
 const SearchScreen = () => {
   const [term, setTerm] = useState("");
-  const [results, setResults] = useState([]);
+  const [searchApi, results, errorMessage] = useResults();
 
-  const searchApi = async (searchTerm) => {
-    console.log("Editing completed");
-    try {
-      const response = await yelp.get("/search", {
-        params: {
-          limit: 50,
-          term: searchTerm,
-          location: "san jose",
-        },
-      });
-      console.log("result : ", response);
-      setResults(response.data.businesses);
-    } catch (error) {
-      console.log("error : ", error);
-      Alert.alert("Oops !", `${error}`, [
-        { text: "OK", onPress: () => console.log("OK Pressed") },
-        {
-          text: "Retry",
-          onPress: () => searchApi(searchTerm),
-          style: "default",
-        },
-      ]);
-    }
+  const filterResultsByPrice = (price) => {
+    // price === '$' || '$$' || '$$$'
+    return results.filter((result) => {
+      return result.price === price;
+    });
   };
+
   return (
-    <View>
+    <>
       <SearchBar
         term={term}
-        onTermChange={(newTerm) => setTerm(newTerm)}
+        onTermChange={setTerm}
         onTermSubmit={() => searchApi(term)}
       />
-      <Text>SearchScreen</Text>
-      <Text>
-        Found {results.length} results for your search "{term}" !
-      </Text>
-    </View>
+      {errorMessage ? <Text>{errorMessage}</Text> : null}
+      <ScrollView>
+        <ResultsList
+          results={filterResultsByPrice("$")}
+          title="Cost Effective"
+        />
+        <ResultsList results={filterResultsByPrice("$$")} title="Bit Pricier" />
+        <ResultsList
+          results={filterResultsByPrice("$$$")}
+          title="Big Spender"
+        />
+      </ScrollView>
+    </>
   );
 };
 
-export default SearchScreen;
-
 const styles = StyleSheet.create({});
+
+export default SearchScreen;

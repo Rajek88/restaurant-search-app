@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "food",
-    "slug": "food",
+    "slug": "yelp-food",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,10 +24,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.rajendraKulkarni.yelpFood"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "18153aa4-1a28-464f-9cc2-664d6eafaf3d"
+      }
+    },
+    "owner": "fcoder"
   }
 }
